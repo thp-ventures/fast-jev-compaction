@@ -10,6 +10,8 @@ export interface ToolUse {
   input: Record<string, unknown>;
   text?: string;
   isError?: boolean;
+  /** false protects the complete pair: repeating this call cannot recreate its result safely. */
+  replaySafe?: boolean;
 }
 
 /** A tool_result block of a user message. */
@@ -17,6 +19,8 @@ export interface ToolResult {
   tool_use_id: string;
   text: string;
   isError?: boolean;
+  /** false protects the complete pair: repeating this call cannot recreate its result safely. */
+  replaySafe?: boolean;
 }
 
 /**
@@ -43,7 +47,7 @@ export interface ToolCall {
   resultIndex: number;
   resultChars: number;
   isError: boolean;
-  /** In the first or the newest preserved messages; never a candidate. */
+  /** Protected by recency, explicit ID, error policy, or replay safety; never a candidate. */
   pinned: boolean;
 }
 
@@ -93,6 +97,10 @@ export interface FittedState {
 }
 
 export interface CompactOptions {
+  /** Native tool_use_id values whose calls and complete results must remain. */
+  protectedToolUseIds?: readonly string[];
+  /** Keep failed tool exchanges intact. Default true; false allows judging resolved failures. */
+  preserveErrors?: boolean;
   /** Ongoing task description; defaults to the last few user prompts. */
   goal?: string;
   /** Minimum keep probability for a call or result to stay. Default 0.5. */
@@ -108,6 +116,8 @@ export interface CompactOptions {
 }
 
 export interface ResolvedCompactOptions {
+  protectedToolUseIds: readonly string[];
+  preserveErrors: boolean;
   goal: string;
   keepThreshold: number;
   preserveRecentMessages: number;

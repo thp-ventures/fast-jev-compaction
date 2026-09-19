@@ -1,0 +1,149 @@
+[
+  {
+    "case": "buried_mapping",
+    "implementation": "original",
+    "repeat": 0,
+    "api_seconds": 0.8203516670037061,
+    "requests": 1,
+    "input_tokens": 4223,
+    "critical_lost": [
+      "r3",
+      "r11"
+    ],
+    "obsolete_removed": 16,
+    "result_byte_reduction": 0.7543325264119788
+  },
+  {
+    "case": "buried_mapping",
+    "implementation": "improved",
+    "repeat": 0,
+    "api_seconds": 0.7438407920417376,
+    "requests": 1,
+    "input_tokens": 4025,
+    "critical_lost": [],
+    "obsolete_removed": 15,
+    "result_byte_reduction": 0.6293184988056495
+  },
+  {
+    "case": "buried_mapping",
+    "implementation": "improved",
+    "repeat": 1,
+    "api_seconds": 0.7325205000233836,
+    "requests": 1,
+    "input_tokens": 4025,
+    "critical_lost": [],
+    "obsolete_removed": 15,
+    "result_byte_reduction": 0.6643314042034725
+  },
+  {
+    "case": "buried_mapping",
+    "implementation": "original",
+    "repeat": 1,
+    "api_seconds": 0.681022250035312,
+    "requests": 1,
+    "input_tokens": 4223,
+    "critical_lost": [
+      "r3",
+      "r11"
+    ],
+    "obsolete_removed": 16,
+    "result_byte_reduction": 0.7543325264119788
+  },
+  {
+    "case": "buried_mapping",
+    "implementation": "original",
+    "repeat": 2,
+    "api_seconds": 0.7913052079966292,
+    "requests": 1,
+    "input_tokens": 4223,
+    "critical_lost": [
+      "r3",
+      "r11"
+    ],
+    "obsolete_removed": 16,
+    "result_byte_reduction": 0.7543325264119788
+  },
+  {
+    "case": "buried_mapping",
+    "implementation": "improved",
+    "repeat": 2,
+    "api_seconds": 0.8217142920475453,
+    "requests": 1,
+    "input_tokens": 4025,
+    "critical_lost": [],
+    "obsolete_removed": 15,
+    "result_byte_reduction": 0.6643314042034725
+  },
+  {
+    "case": "action_receipt",
+    "implementation": "original",
+    "repeat": 0,
+    "api_seconds": 0.7987054170225747,
+    "requests": 1,
+    "input_tokens": 4239,
+    "critical_lost": [
+      "r4"
+    ],
+    "obsolete_removed": 16,
+    "result_byte_reduction": 0.7101181194325722
+  },
+  {
+    "case": "action_receipt",
+    "implementation": "improved",
+    "repeat": 0,
+    "api_seconds": 0.8735436249990016,
+    "requests": 1,
+    "input_tokens": 4041,
+    "critical_lost": [],
+    "obsolete_removed": 9,
+    "result_byte_reduction": 0.6492528361921477
+  },
+  {
+    "case": "action_receipt",
+    "implementation": "improved",
+    "repeat": 1,
+    "api_seconds": 0.7052225000225008,
+    "requests": 1,
+    "input_tokens": 4041,
+    "critical_lost": [],
+    "obsolete_removed": 6,
+    "result_byte_reduction": 0.6410520268436037
+  },
+  {
+    "case": "action_receipt",
+    "implementation": "original",
+    "repeat": 1,
+    "api_seconds": 0.7434949590242468,
+    "requests": 1,
+    "input_tokens": 4239,
+    "critical_lost": [
+      "r4"
+    ],
+    "obsolete_removed": 16,
+    "result_byte_reduction": 0.7101181194325722
+  },
+  {
+    "case": "action_receipt",
+    "implementation": "original",
+    "repeat": 2,
+    "api_seconds": 0.7330628749914467,
+    "requests": 1,
+    "input_tokens": 4239,
+    "critical_lost": [
+      "r4"
+    ],
+    "obsolete_removed": 16,
+    "result_byte_reduction": 0.7101181194325722
+  },
+  {
+    "case": "action_receipt",
+    "implementation": "improved",
+    "repeat": 2,
+    "api_seconds": 0.6995428329682909,
+    "requests": 1,
+    "input_tokens": 4041,
+    "critical_lost": [],
+    "obsolete_removed": 11,
+    "result_byte_reduction": 0.6547200424245103
+  }
+]

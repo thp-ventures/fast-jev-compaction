@@ -5,6 +5,42 @@ every tool call and result is scored in one fast request, stale ones are
 dropped or truncated, everything kept stays verbatim. Also usable as an npm
 library.
 
+## Protection changes in this fork
+
+This fork adds explicit retention without another Jev pass. The npm package and
+upstream Claude marketplace commands below still install the upstream release;
+these changes currently require this checkout (`npm ci && npm run build`).
+
+```ts
+import { compactMessages } from './dist/index.js';
+
+const result = await compactMessages(transcript, {
+  protectedToolUseIds: ['captured-mapping-id', 'migration-receipt-id'],
+  preserveErrors: true, // default; false lets Jev judge resolved failures
+});
+```
+
+Use native `tool_use_id` values, not Jev's temporary `t1`, `t2` question IDs.
+Unknown IDs throw before sending a request. Supply the protection list on every
+compaction. A call or result may alternatively carry `replaySafe: false` to keep
+its entire pair: use this for write receipts and evidence that cannot safely be
+recreated. This is adapter-supplied metadata, not inferred from a tool's name.
+An unfinished call already remains untouched.
+
+Protected pairs are excluded from Jev questions and retained verbatim, including
+when another call sharing their message is removed. Errors reported on either
+the call or its result are protected by default. The exported `applyDecisions`
+also enforces the pins returned by `collectToolCalls`. Protected IDs and replay
+metadata are library/adapter features; the stock Claude hook automatically gets
+error protection, with a `preserveErrors` plugin setting to opt out.
+
+This does **not** detect every important fact in an unmarked output. Jev still
+sees output-size notes, not full results. Keep an original transcript for recovery.
+Truncation notes now direct the reader to that transcript instead of suggesting
+that any tool can safely be rerun. Protection applies to this library's returned
+messages; the Claude hook can still fall back to its built-in summary on errors
+or insufficient reduction, whose retention behavior is outside this guarantee.
+
 ## What and why
 
 Most context compaction asks an LLM to summarize old turns. A summary is
@@ -22,7 +58,8 @@ built-in compaction summary with the original messages.
 
 1. Every `tool_use` is paired with its `tool_result` by `tool_use_id`. Calls in
    the first message or in the newest `preserveRecentMessages` messages are
-   pinned and never touched.
+   pinned and never touched. Explicitly protected IDs, non-replayable exchanges,
+   and errors (by default) are pinned too.
 2. The **state** sent to Jev is the whole conversation so far, oldest first,
    with every tool result replaced by a short note (`ok, 4213 chars (omitted)`).
    Tool inputs are included, texts are included, nothing is summarized.
@@ -106,6 +143,8 @@ put it in a source file.
 | `fetch` | native `fetch` | Injectable fetch implementation for tests |
 | `goal` | last 3 user prompts | Ongoing task description included in the state |
 | `keepThreshold` | `0.5` | Minimum keep probability for a call or result to stay |
+| `protectedToolUseIds` | `[]` | Native IDs whose complete call/result pairs must stay; unknown IDs throw |
+| `preserveErrors` | `true` | Protect error exchanges; false allows Jev to judge resolved failures |
 | `preserveRecentMessages` | `6` | Newest messages never touched (the first is always kept) |
 | `maxStateTokens` | `25000` | Estimated token ceiling for the state |
 | `maxRequestTokens` | `30000` | Estimated ceiling for state plus one batch of questions |
@@ -121,7 +160,8 @@ stage was needed, and the number of requests.
   or shortened in the output (they are only abridged in the state Jev sees).
 - Token sizes are estimates from character counts, not a tokenizer.
 - Calibration is at the request level; a probability is not a proof that a
-  result is safe to delete. The assistant can always re-run the tool.
+  result is safe to delete. Tool results may be irreplaceable and calls may have
+  side effects; explicitly protect them rather than relying on re-execution.
 - The full state is repeated with every request, so a history near the state
   ceiling costs one request per handful of questions.
 
