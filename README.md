@@ -41,6 +41,27 @@ that any tool can safely be rerun. Protection applies to this library's returned
 messages; the Claude hook can still fall back to its built-in summary on errors
 or insufficient reduction, whose retention behavior is outside this guarantee.
 
+## Codex skill
+
+[`skills/jev-compact`](skills/jev-compact/SKILL.md) is a self-contained Node 18+
+skill using this improved engine. Install that folder at user scope to make it
+available across projects. It includes an offline plan command and a bounded
+live runner, with separate original/compacted/report/response files.
+
+Credentials come from `TYPESAFE_API_KEY` or `~/.config/jev/api-key` (store the file
+with mode 600); they are not bundled. `node scripts/compact.mjs status`, run from
+the skill directory, reports configuration without displaying the key.
+
+This skill produces smaller exports for later requests and handoffs. It does
+not replace active Codex history or native automatic compaction. The documented
+[PreCompact/PostCompact hooks](https://learn.chatgpt.com/docs/hooks#precompact)
+do not accept replacement messages. Do not install the Claude hook into Codex.
+
+When modifying the core library, run `npm run build:skill` to refresh the three
+bundled engine modules before distributing the skill. The bundle includes the
+original MIT licence; no runtime dependencies or separate npm installation are
+required.
+
 ## What and why
 
 Most context compaction asks an LLM to summarize old turns. A summary is
