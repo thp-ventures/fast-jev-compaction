@@ -321,13 +321,13 @@ describe('decisions', () => {
 
     const kept = applyDecisions(messages, decisions, calls, 50);
     expect(kept[2]?.toolResults?.[0]?.text).toBe(
-      `${original.slice(0, 50)}\n[fast-jev-compaction truncated ${total - 50} chars of this tool result; re-run the tool if needed]`,
+      `${original.slice(0, 50)}\n[fast-jev-compaction truncated ${total - 50} chars of this tool result; consult the original transcript; do not repeat a side-effecting call]`,
     );
     expect(kept[1]?.toolUses[0]?.text).toBe(kept[2]?.toolResults?.[0]?.text);
 
     const noHead = applyDecisions(messages, decisions, calls, 0);
     expect(noHead[2]?.toolResults?.[0]?.text).toBe(
-      `[fast-jev-compaction truncated ${total} chars of this tool result; re-run the tool if needed]`,
+      `[fast-jev-compaction truncated ${total} chars of this tool result; consult the original transcript; do not repeat a side-effecting call]`,
     );
   });
 });
@@ -352,15 +352,13 @@ describe('compact', () => {
     expect(seen.flatMap((r) => r.questions).sort()).toEqual([
       'call_t1',
       'call_t2',
-      'call_t3',
       'result_t1',
       'result_t2',
-      'result_t3',
     ]);
     expect(new Set(seen.map((r) => JSON.stringify(r.state))).size).toBe(1);
-    expect(output.decisions.map((d) => d.action)).toEqual(['drop_result', 'drop_result', 'drop_result']);
+    expect(output.decisions.map((d) => d.action)).toEqual(['drop_result', 'drop_result', 'keep']);
     expect(output.messages).toHaveLength(messages.length);
-    expect(output.stats).toMatchObject({ resultsDropped: 3, kept: 0, callsDropped: 0, pinned: 0 });
+    expect(output.stats).toMatchObject({ resultsDropped: 2, kept: 0, callsDropped: 0, pinned: 1 });
     expect(reductionRatio(output)).toBeGreaterThan(0);
   });
 

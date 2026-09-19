@@ -16,6 +16,8 @@ import type {
 
 export const DEFAULT_OPTIONS: ResolvedCompactOptions = {
   goal: '',
+  protectedToolUseIds: [],
+  preserveErrors: true,
   keepThreshold: 0.5,
   preserveRecentMessages: 6,
   maxStateTokens: 25_000,
@@ -33,6 +35,8 @@ function finite(value: number | undefined, fallback: number): number {
 export function resolveOptions(options: CompactOptions = {}): ResolvedCompactOptions {
   return {
     goal: options.goal ?? DEFAULT_OPTIONS.goal,
+    protectedToolUseIds: options.protectedToolUseIds ?? DEFAULT_OPTIONS.protectedToolUseIds,
+    preserveErrors: options.preserveErrors ?? DEFAULT_OPTIONS.preserveErrors,
     keepThreshold: finite(options.keepThreshold, DEFAULT_OPTIONS.keepThreshold),
     preserveRecentMessages: Math.max(
       0,
@@ -137,7 +141,7 @@ function truncatedResultText(text: string, isError: boolean, headChars: number):
   const head = headChars > 0 ? `${text.slice(0, headChars)}\n` : '';
   return `${head}[fast-jev-compaction truncated ${text.length - headChars} chars of this tool result${
     isError ? ' (error)' : ''
-  }; re-run the tool if needed]`;
+  }; consult the original transcript; do not repeat a side-effecting call]`;
 }
 
 /**
@@ -156,7 +160,7 @@ export function applyDecisions(
   const actions = new Map<string, CallDecision['action']>();
   for (const decision of decisions) {
     const call = byId.get(decision.id);
-    if (call && decision.action !== 'keep') actions.set(call.tool_use_id, decision.action);
+    if (call && !call.pinned && decision.action !== 'keep') actions.set(call.tool_use_id, decision.action);
   }
   const kept: Message[] = [];
   for (const message of messages) {
@@ -261,7 +265,7 @@ export async function compact(
 ): Promise<CompactResult> {
   const started = Date.now();
   const resolved = resolveOptions(options);
-  const calls = collectToolCalls(messages, resolved.preserveRecentMessages);
+  const calls = collectToolCalls(messages, resolved.preserveRecentMessages, resolved);
   const candidates = calls.filter((call) => !call.pinned);
   const charsBefore = messages.reduce((sum, message) => sum + messageChars(message), 0);
 

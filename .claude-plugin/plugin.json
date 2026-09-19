@@ -57,6 +57,12 @@
       "title": "Jev model",
       "description": "TypeSafe Jev model name.",
       "default": "jev-latest"
+    },
+    "preserveErrors": {
+      "type": "boolean",
+      "title": "Preserve failed tool results",
+      "description": "Keep failed tool calls and results verbatim. Disable only when old failures are resolved and may be judged for removal.",
+      "default": true
     }
   }
 }
