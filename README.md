@@ -87,9 +87,11 @@ Compact** from `/plugins`:
 codex plugin marketplace add thp-ventures/fast-jev-compaction
 ```
 
-Start a new task after installation, then open `/hooks` and review/trust the two
-Jev Compact command hooks. Codex requires this explicit hook trust step. The
-saved `~/.config/jev/api-key` credential works without placing it in the plugin.
+Open an interactive Codex CLI session by running `codex`, then use `/hooks` to
+review and trust the two Jev Compact command hooks. `/hooks` is a CLI command;
+it is not available in the Codex desktop chat box. The saved trust applies to
+Codex generally. The `~/.config/jev/api-key` credential works without placing
+it in the plugin.
 
 This automation improves recovery and future-task handoffs. Codex hooks cannot
 replace live messages, so native Codex compaction still controls the active
