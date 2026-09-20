@@ -70,8 +70,9 @@ sidecar checkpoints in the plugin data directory:
 
 - `PreCompact` checkpoints changed eligible history immediately before native
   automatic or manual compaction.
-- A background `Stop` hook checkpoints only after a transcript reaches 150 KB
-  and has grown by at least 75 KB since its last checkpoint.
+- A `Stop` hook immediately launches a background worker, which checkpoints only
+  after a transcript reaches 150 KB and has grown by at least 75 KB since its
+  last checkpoint. This also works on Codex versions without native async hooks.
 
 The adapter exports visible user/assistant text and paired tool calls/results,
 removes injected environment and instruction blocks, redacts likely credentials,

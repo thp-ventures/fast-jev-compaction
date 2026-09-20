@@ -1,6 +1,8 @@
 # Automatic Codex checkpoints
 
-The plugin runs a synchronous `PreCompact` hook and a background `Stop` hook.
+The plugin runs a synchronous `PreCompact` hook and a `Stop` hook that immediately
+detaches its own background worker. The wrapper works on Codex versions that do
+not yet accept the native `async` hook field.
 Both read Codex's `transcript_path`, export only visible user/assistant messages
 and paired tool exchanges, and write a recoverable Jev bundle under the plugin's
 private `PLUGIN_DATA/checkpoints/<session-id>/` directory.

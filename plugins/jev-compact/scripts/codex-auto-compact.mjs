@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /** Automatic, fail-closed Codex transcript exporter and Jev sidecar checkpoint. */
 import {createHash} from 'node:crypto';
+import {spawn} from 'node:child_process';
 import {
   closeSync,
   existsSync,
@@ -14,6 +15,7 @@ import {
 } from 'node:fs';
 import {homedir} from 'node:os';
 import {basename, join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {plan, run} from '../skills/jev-compact/scripts/compact.mjs';
 
 const DEFAULT_STOP_MIN_BYTES = 150_000;
@@ -262,7 +264,33 @@ async function readStdin() {
   return JSON.parse(input || '{}');
 }
 
-if (process.argv[1] && basename(process.argv[1]) === basename(new URL(import.meta.url).pathname)) {
-  try { await checkpoint(await readStdin()); } catch {}
+function launchBackground(payload) {
+  const encoded = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const child = spawn(process.execPath, [fileURLToPath(import.meta.url), '--background', encoded], {
+    detached: true,
+    stdio: 'ignore',
+    env: process.env,
+  });
+  child.unref();
+}
+
+export async function handleHook(payload, options = {}) {
+  if (payload?.hook_event_name === 'Stop' && !options.background) {
+    const launch = options.launchFn ?? launchBackground;
+    launch(payload);
+    return {status: 'queued'};
+  }
+  return checkpoint(payload, options);
+}
+
+if (process.argv[1] && basename(process.argv[1]) === basename(fileURLToPath(import.meta.url))) {
+  try {
+    if (process.argv[2] === '--background' && process.argv[3]) {
+      const payload = JSON.parse(Buffer.from(process.argv[3], 'base64url').toString('utf8'));
+      await handleHook(payload, {background: true});
+    } else {
+      await handleHook(await readStdin());
+    }
+  } catch {}
   process.stdout.write('{"continue":true}\n');
 }

@@ -20,7 +20,6 @@
           {
             "type": "command",
             "command": "node \"${PLUGIN_ROOT}/scripts/codex-auto-compact.mjs\"",
-            "async": true,
             "timeout": 60
           }
         ]

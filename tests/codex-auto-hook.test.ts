@@ -6,6 +6,7 @@ import {
   checkpoint,
   containsLikelySecret,
   exportTranscript,
+  handleHook,
   shouldCheckpoint,
 } from '../plugins/jev-compact/scripts/codex-auto-compact.mjs';
 
@@ -73,5 +74,15 @@ describe('Codex automatic checkpoint hook', () => {
     expect(result.status).toBe('skipped');
     const status = JSON.parse(readFileSync(join(root, 'checkpoints/large/status.json'), 'utf8'));
     expect(status.reason).toBe('outside_size_threshold');
+  });
+
+  it('queues Stop work in its own background process for older Codex versions', async () => {
+    let queued: any;
+    const payload = {hook_event_name: 'Stop', transcript_path: '/tmp/transcript', session_id: 's1'};
+    const result = await handleHook(payload, {launchFn: (value: any) => { queued = value; }});
+    expect(result.status).toBe('queued');
+    expect(queued).toEqual(payload);
+    const hooks = JSON.parse(readFileSync(join(process.cwd(), 'plugins/jev-compact/hooks/hooks.json'), 'utf8'));
+    expect(hooks.hooks.Stop[0].hooks[0].async).toBeUndefined();
   });
 });

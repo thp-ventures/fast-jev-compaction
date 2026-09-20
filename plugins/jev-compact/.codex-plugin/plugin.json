@@ -1,6 +1,6 @@
 {
   "name": "jev-compact",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Automatic recoverable Jev checkpoints for tool-heavy Codex tasks.",
   "author": {
     "name": "thp-ventures"
