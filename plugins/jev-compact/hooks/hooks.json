@@ -1,0 +1,30 @@
+{
+  "description": "Create recoverable Jev sidecar checkpoints without changing Codex's native history.",
+  "hooks": {
+    "PreCompact": [
+      {
+        "matcher": "^(auto|manual)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/scripts/codex-auto-compact.mjs\"",
+            "timeout": 45,
+            "statusMessage": "Creating Jev recovery checkpoint"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/scripts/codex-auto-compact.mjs\"",
+            "async": true,
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}

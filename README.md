@@ -62,6 +62,40 @@ bundled engine modules before distributing the skill. The bundle includes the
 original MIT licence; no runtime dependencies or separate npm installation are
 required.
 
+### Automatic Codex checkpoints
+
+The repository also includes a Codex plugin at
+[`plugins/jev-compact`](plugins/jev-compact). Its hooks create recoverable
+sidecar checkpoints in the plugin data directory:
+
+- `PreCompact` checkpoints changed eligible history immediately before native
+  automatic or manual compaction.
+- A background `Stop` hook checkpoints only after a transcript reaches 150 KB
+  and has grown by at least 75 KB since its last checkpoint.
+
+The adapter exports visible user/assistant text and paired tool calls/results,
+removes injected environment and instruction blocks, redacts likely credentials,
+and protects errors and probable write operations. It never prints the API key
+or sends hidden reasoning and developer messages to Jev. The original Codex
+transcript remains the recovery source.
+
+After this fork is merged, add it as a Codex marketplace and install **Jev
+Compact** from `/plugins`:
+
+```sh
+codex plugin marketplace add thp-ventures/fast-jev-compaction
+```
+
+Start a new task after installation, then open `/hooks` and review/trust the two
+Jev Compact command hooks. Codex requires this explicit hook trust step. The
+saved `~/.config/jev/api-key` credential works without placing it in the plugin.
+
+This automation improves recovery and future-task handoffs. Codex hooks cannot
+replace live messages, so native Codex compaction still controls the active
+context window. See
+[`automatic-codex.md`](skills/jev-compact/references/automatic-codex.md) for
+artifact locations, thresholds, and failure behavior.
+
 ## What and why
 
 Most context compaction asks an LLM to summarize old turns. A summary is

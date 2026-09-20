@@ -1,0 +1,20 @@
+{
+  "name": "fast-jev-compaction",
+  "interface": {
+    "displayName": "Fast Jev Compaction"
+  },
+  "plugins": [
+    {
+      "name": "jev-compact",
+      "source": {
+        "source": "local",
+        "path": "./plugins/jev-compact"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
