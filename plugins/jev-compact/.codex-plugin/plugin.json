@@ -1,0 +1,18 @@
+{
+  "name": "jev-compact",
+  "version": "0.1.1",
+  "description": "Automatic recoverable Jev checkpoints for tool-heavy Codex tasks.",
+  "author": {
+    "name": "thp-ventures"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Jev Compact",
+    "shortDescription": "Create lean Jev checkpoints automatically.",
+    "longDescription": "Jev Compact creates recoverable sidecar checkpoints before native Codex compaction and after sufficiently large tool-heavy turns. It never rewrites Codex's active transcript.",
+    "developerName": "thp-ventures",
+    "category": "Productivity",
+    "capabilities": ["skills", "hooks"],
+    "defaultPrompt": "Show the latest Jev Compact checkpoint for this task."
+  }
+}
